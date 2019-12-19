@@ -1,6 +1,11 @@
 <?php
     include('includes/header.php');
     include('includes/navigation.php');
+    require_once('includes/connect.php');
+    if(isset($_POST) & !empty($_POST)){
+        print_r($_POST);
+        // insert into clients database table with PHP PDO
+    }
 ?>
 <div id="page-wrapper" style="min-height: 345px;">
     <div class="row">
@@ -19,7 +24,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-lg-6">
-                            <form role="form">
+                            <form role="form" method="post">
                                 <div class="form-group">
                                     <label>Client Name</label>
                                     <input class="form-control" name="name" placeholder="Enter Client Name">
@@ -37,7 +42,7 @@
                                     <textarea class="form-control" name="address" placeholder="Enter Client Address"></textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <input type="submit" class="btn btn-primary" value="Submit">
                                 <button type="reset" class="btn btn-danger">Reset </button>
                             </form>
                         </div>
