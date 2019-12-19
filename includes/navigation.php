@@ -47,16 +47,16 @@
                             <!-- /input-group -->
                         </li>
                         <li>
-                            <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                            <a href="dashboard.php"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Clients<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="add-client.html">Add Client</a>
+                                    <a href="add-client.php">Add Client</a>
                                 </li>
                                 <li>
-                                    <a href="view-clients.html">View Clients</a>
+                                    <a href="view-clients.php">View Clients</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -65,10 +65,10 @@
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Products<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="add-product.html">Add Product</a>
+                                    <a href="add-product.php">Add Product</a>
                                 </li>
                                 <li>
-                                    <a href="view-products.html">View Products</a>
+                                    <a href="view-products.php">View Products</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -77,10 +77,10 @@
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Services<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="add-service.html">Add Service</a>
+                                    <a href="add-service.php">Add Service</a>
                                 </li>
                                 <li>
-                                    <a href="view-services.html">View Services</a>
+                                    <a href="view-services.php">View Services</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -89,10 +89,10 @@
                             <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Invoices<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="create-invoice.html">Create Invoice</a>
+                                    <a href="create-invoice.php">Create Invoice</a>
                                 </li>
                                 <li>
-                                    <a href="view-invoices.html">View Invoices</a>
+                                    <a href="view-invoices.php">View Invoices</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
