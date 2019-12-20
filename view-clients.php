@@ -40,7 +40,7 @@
                                     <td><?php echo $client['name']; ?></td>
                                     <td><?php echo $client['email']; ?></td>
                                     <td><?php echo $client['mobile']; ?></td>
-                                    <td><a href="update-cient.php?id=<?php echo $client['id']; ?>">Edit</a> <a href="delete-client.php?id=<?php echo $client['id']; ?>">Delete</a></td>
+                                    <td><a href="update-client.php?id=<?php echo $client['id']; ?>">Edit</a> <a href="delete-client.php?id=<?php echo $client['id']; ?>">Delete</a></td>
                                 </tr>
                                 <?php } ?>
                             </tbody>
