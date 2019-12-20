@@ -1,45 +1,76 @@
 <?php
-    include('includes/header.php');
-    include('includes/navigation.php');
-    require_once('includes/connect.php');
-    if(isset($_POST) & !empty($_POST)){
-        // validations for email/mobile field unique
-        if(empty($_POST['name'])){ $errors[] = 'Name field is Required'; }
-        if(empty($_POST['email'])){ $errors[] = 'E-Mail field is Required'; }else{
-            $sql = "SELECT * FROM clients WHERE email=?";
-            $result = $db->prepare($sql);
-            $result->execute(array($_POST['email']));
-            $count = $result->rowCount();
-            if($count == 1){
-                $errors[] = 'E-Mail already eixts in Database';
-            }
-        }
-        if(empty($_POST['mobile'])){ $errors[] = 'Mobile field is Required'; }else{
-            $sql = "SELECT * FROM clients WHERE mobile=?";
-            $result = $db->prepare($sql);
-            $result->execute(array($_POST['mobile']));
-            $count = $result->rowCount();
-            if($count == 1){
-                $errors[] = 'Mobile already eixts in Database';
-            }
-        }
-        // insert into clients database table with PHP PDO
-        if(empty($errors)){
-            $sql = "INSERT INTO clients (name, email, mobile, address) VALUES (:name, :email, :mobile, :address)";
-            $result = $db->prepare($sql);
-            $values = array(
-                            ':name'     => $_POST['name'],
-                            ':email'    => $_POST['email'],
-                            ':mobile'   => $_POST['mobile'],
-                            ':address'  => $_POST['address']
-
-                            );
-            $res = $result->execute($values);
-            if($res){
-                echo "redirect the user to create invoice page";
-            }
+session_start();
+include('includes/header.php');
+include('includes/navigation.php');
+require_once('includes/connect.php');
+if(isset($_POST) & !empty($_POST)){
+    // validations for email/mobile field unique
+    if(empty($_POST['name'])){ $errors[] = 'Name field is Required'; }
+    if(empty($_POST['email'])){ $errors[] = 'E-Mail field is Required'; }else{
+        $sql = "SELECT * FROM clients WHERE email=?";
+        $result = $db->prepare($sql);
+        $result->execute(array($_POST['email']));
+        $count = $result->rowCount();
+        if($count == 1){
+            $errors[] = 'E-Mail already eixts in Database';
         }
     }
+    if(empty($_POST['mobile'])){ $errors[] = 'Mobile field is Required'; }else{
+        $sql = "SELECT * FROM clients WHERE mobile=?";
+        $result = $db->prepare($sql);
+        $result->execute(array($_POST['mobile']));
+        $count = $result->rowCount();
+        if($count == 1){
+            $errors[] = 'Mobile already eixts in Database';
+        }
+    }
+
+    // CSRF Token Validation
+    if(isset($_POST['csrf_token'])){
+        if($_POST['csrf_token'] === $_SESSION['csrf_token']){
+        }else{
+            $errors[] = "Problem with CSRF Token Verification";
+        }
+    }else{
+        $errors[] = "Problem with CSRF Token Validation";
+    }
+
+    // CSRF Token Time Validation
+    $max_time = 60*60*24;
+    if(isset($_SESSION['csrf_token_time'])){
+        $token_time = $_SESSION['csrf_token_time'];
+        if(($token_time + $max_time) >= time()){
+        }else{
+            $errors[] = "CSRF Token Expired";
+            unset($_SESSION['csrf_token']);
+            unset($_SESSION['csrf_token_time']);
+        }
+    }else{
+        unset($_SESSION['csrf_token']);
+        unset($_SESSION['csrf_token_time']);
+    }
+
+    // insert into clients database table with PHP PDO
+    if(empty($errors)){
+        $sql = "INSERT INTO clients (name, email, mobile, address) VALUES (:name, :email, :mobile, :address)";
+        $result = $db->prepare($sql);
+        $values = array(
+                        ':name'     => $_POST['name'],
+                        ':email'    => $_POST['email'],
+                        ':mobile'   => $_POST['mobile'],
+                        ':address'  => $_POST['address']
+
+                        );
+        $res = $result->execute($values);
+        if($res){
+            echo "redirect the user to create invoice page";
+        }
+    }
+}
+// create a CSRF token
+$token = md5(uniqid(rand(), TRUE));
+$_SESSION['csrf_token'] = $token;
+$_SESSION['csrf_token_time'] = time();
 ?>
 <div id="page-wrapper" style="min-height: 345px;">
     <div class="row">
@@ -68,6 +99,7 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <form role="form" method="post">
+                                <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
                                 <div class="form-group">
                                     <label>Client Name</label>
                                     <input class="form-control" name="name" placeholder="Enter Client Name" value="<?php if(isset($_POST['name'])){ echo $_POST['name']; } ?>">
