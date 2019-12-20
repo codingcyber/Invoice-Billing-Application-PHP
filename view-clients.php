@@ -1,6 +1,10 @@
 <?php
     include('includes/header.php');
     include('includes/navigation.php');
+    require_once('includes/connect.php');
+    $sql = "SELECT * FROM clients";
+    $result = $db->query($sql);
+    $res = $result->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <div id="page-wrapper" style="min-height: 345px;">
     <div class="row">
@@ -23,38 +27,22 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>User Name</th>
                                     <th>Name</th>
                                     <th>E-Mail</th>
-                                    <th>Role</th>
-                                    <th>Articles</th>
+                                    <th>Mobile</th>
+                                    <th>Operations</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php foreach ($res as $client) { ?>
                                 <tr>
-                                    <td>1</td>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                    <td>@mdo</td>
-                                    <td>@mdo</td>
+                                    <td><?php echo $client['id']; ?></td>
+                                    <td><?php echo $client['name']; ?></td>
+                                    <td><?php echo $client['email']; ?></td>
+                                    <td><?php echo $client['mobile']; ?></td>
+                                    <td><a href="update-cient.php?id=<?php echo $client['id']; ?>">Edit</a> <a href="delete-client.php?id=<?php echo $client['id']; ?>">Delete</a></td>
                                 </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>@fat</td>
-                                    <td>@mdo</td>
-                                    <td>@mdo</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Larry</td>
-                                    <td>the Bird</td>
-                                    <td>@twitter</td>
-                                    <td>@mdo</td>
-                                    <td>@mdo</td>
-                                </tr>
+                                <?php } ?>
                             </tbody>
                         </table>
                     </div>
