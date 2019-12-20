@@ -3,20 +3,24 @@
     include('includes/navigation.php');
     require_once('includes/connect.php');
     if(isset($_POST) & !empty($_POST)){
-        //print_r($_POST);
+        if(empty($_POST['name'])){ $errors[] = 'Name field is Required'; }
+        if(empty($_POST['email'])){ $errors[] = 'E-Mail field is Required'; }
+        if(empty($_POST['mobile'])){ $errors[] = 'Mobile field is Required'; }
         // insert into clients database table with PHP PDO
-        $sql = "INSERT INTO clients (name, email, mobile, address) VALUES (:name, :email, :mobile, :address)";
-        $result = $db->prepare($sql);
-        $values = array(
-                        ':name'     => $_POST['name'],
-                        ':email'    => $_POST['email'],
-                        ':mobile'   => $_POST['mobile'],
-                        ':address'  => $_POST['address']
+        if(empty($errors)){
+            $sql = "INSERT INTO clients (name, email, mobile, address) VALUES (:name, :email, :mobile, :address)";
+            $result = $db->prepare($sql);
+            $values = array(
+                            ':name'     => $_POST['name'],
+                            ':email'    => $_POST['email'],
+                            ':mobile'   => $_POST['mobile'],
+                            ':address'  => $_POST['address']
 
-                        );
-        $res = $result->execute($values);
-        if($res){
-            echo "redirect the user to create invoice page";
+                            );
+            $res = $result->execute($values);
+            if($res){
+                echo "redirect the user to create invoice page";
+            }
         }
     }
 ?>
@@ -27,6 +31,15 @@
         </div>
         <!-- /.col-lg-12 -->
     </div>
+    <?php
+        if(!empty($errors)){
+            echo "<div class='alert alert-danger'>";
+            foreach ($errors as $error) {
+                echo $error . "<br>";
+            }
+            echo "</div>";
+        }
+    ?>
     <!-- /.row -->
     <div class="row">
         <div class="col-lg-12">
