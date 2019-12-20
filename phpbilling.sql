@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 19, 2019 at 03:11 PM
+-- Generation Time: Dec 20, 2019 at 11:00 AM
 -- Server version: 10.3.15-MariaDB
 -- PHP Version: 7.1.30
 
@@ -46,7 +46,8 @@ CREATE TABLE `clients` (
 -- Indexes for table `clients`
 --
 ALTER TABLE `clients`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`,`mobile`);
 
 --
 -- AUTO_INCREMENT for dumped tables

@@ -3,6 +3,7 @@
     include('includes/navigation.php');
     require_once('includes/connect.php');
     if(isset($_POST) & !empty($_POST)){
+        // validations for email/mobile field unique
         if(empty($_POST['name'])){ $errors[] = 'Name field is Required'; }
         if(empty($_POST['email'])){ $errors[] = 'E-Mail field is Required'; }
         if(empty($_POST['mobile'])){ $errors[] = 'Mobile field is Required'; }
@@ -53,19 +54,19 @@
                             <form role="form" method="post">
                                 <div class="form-group">
                                     <label>Client Name</label>
-                                    <input class="form-control" name="name" placeholder="Enter Client Name">
+                                    <input class="form-control" name="name" placeholder="Enter Client Name" value="<?php if(isset($_POST['name'])){ echo $_POST['name']; } ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>E-Mail</label>
-                                    <input type="email" name="email" class="form-control" placeholder="Enter E-Mail">
+                                    <input type="email" name="email" class="form-control" placeholder="Enter E-Mail" value="<?php if(isset($_POST['email'])){ echo $_POST['email']; } ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Mobile</label>
-                                    <input class="form-control" name="mobile" placeholder="Enter Mobile Number">
+                                    <input class="form-control" name="mobile" placeholder="Enter Mobile Number" value="<?php if(isset($_POST['mobile'])){ echo $_POST['mobile']; } ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Address</label>
-                                    <textarea class="form-control" name="address" placeholder="Enter Client Address"></textarea>
+                                    <textarea class="form-control" name="address" placeholder="Enter Client Address"><?php if(isset($_POST['address'])){ echo $_POST['address']; } ?></textarea>
                                 </div>
 
                                 <input type="submit" class="btn btn-primary" value="Submit">
