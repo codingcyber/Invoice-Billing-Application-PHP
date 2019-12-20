@@ -5,8 +5,24 @@
     if(isset($_POST) & !empty($_POST)){
         // validations for email/mobile field unique
         if(empty($_POST['name'])){ $errors[] = 'Name field is Required'; }
-        if(empty($_POST['email'])){ $errors[] = 'E-Mail field is Required'; }
-        if(empty($_POST['mobile'])){ $errors[] = 'Mobile field is Required'; }
+        if(empty($_POST['email'])){ $errors[] = 'E-Mail field is Required'; }else{
+            $sql = "SELECT * FROM clients WHERE email=?";
+            $result = $db->prepare($sql);
+            $result->execute(array($_POST['email']));
+            $count = $result->rowCount();
+            if($count == 1){
+                $errors[] = 'E-Mail already eixts in Database';
+            }
+        }
+        if(empty($_POST['mobile'])){ $errors[] = 'Mobile field is Required'; }else{
+            $sql = "SELECT * FROM clients WHERE mobile=?";
+            $result = $db->prepare($sql);
+            $result->execute(array($_POST['mobile']));
+            $count = $result->rowCount();
+            if($count == 1){
+                $errors[] = 'Mobile already eixts in Database';
+            }
+        }
         // insert into clients database table with PHP PDO
         if(empty($errors)){
             $sql = "INSERT INTO clients (name, email, mobile, address) VALUES (:name, :email, :mobile, :address)";
