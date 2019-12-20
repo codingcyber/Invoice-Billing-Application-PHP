@@ -3,8 +3,21 @@
     include('includes/navigation.php');
     require_once('includes/connect.php');
     if(isset($_POST) & !empty($_POST)){
-        print_r($_POST);
+        //print_r($_POST);
         // insert into clients database table with PHP PDO
+        $sql = "INSERT INTO clients (name, email, mobile, address) VALUES (:name, :email, :mobile, :address)";
+        $result = $db->prepare($sql);
+        $values = array(
+                        ':name'     => $_POST['name'],
+                        ':email'    => $_POST['email'],
+                        ':mobile'   => $_POST['mobile'],
+                        ':address'  => $_POST['address']
+
+                        );
+        $res = $result->execute($values);
+        if($res){
+            echo "redirect the user to create invoice page";
+        }
     }
 ?>
 <div id="page-wrapper" style="min-height: 345px;">
