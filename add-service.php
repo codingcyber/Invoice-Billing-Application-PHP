@@ -1,6 +1,7 @@
 <?php
     include('includes/header.php');
     include('includes/navigation.php');
+    require_once('includes/connect.php');
 ?>
 <div id="page-wrapper" style="min-height: 345px;">
     <div class="row">
@@ -19,7 +20,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-lg-12">
-                            <form role="form">
+                            <form role="form" method="post">
                                 <div class="form-group">
                                     <label>Service Name</label>
                                     <input class="form-control" name="name" placeholder="Enter Servive Name">
