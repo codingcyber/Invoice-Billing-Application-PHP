@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 20, 2019 at 11:00 AM
+-- Generation Time: Dec 22, 2019 at 04:07 PM
 -- Server version: 10.3.15-MariaDB
 -- PHP Version: 7.1.30
 
@@ -38,6 +38,23 @@ CREATE TABLE `clients` (
   `updated` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `items`
+--
+
+CREATE TABLE `items` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `price` varchar(255) NOT NULL,
+  `stock` varchar(255) NOT NULL DEFAULT '0',
+  `created` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 --
 -- Indexes for dumped tables
 --
@@ -50,6 +67,12 @@ ALTER TABLE `clients`
   ADD UNIQUE KEY `email` (`email`,`mobile`);
 
 --
+-- Indexes for table `items`
+--
+ALTER TABLE `items`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -57,6 +80,12 @@ ALTER TABLE `clients`
 -- AUTO_INCREMENT for table `clients`
 --
 ALTER TABLE `clients`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `items`
+--
+ALTER TABLE `items`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
