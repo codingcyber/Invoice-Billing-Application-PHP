@@ -4,22 +4,23 @@
     require_once('includes/connect.php');
 ?>
 <style type="text/css">
-    ul#results{
-        list-style: none;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        display: none;
-    }
-    ul#results li a{
-        color: #000;
-        background: #ccc;
-        display: block;
-        text-decoration: none;
-    }
-    ul#results li a:hover{
-        background: #aaa;
-    }
+ul#results{
+    list-style: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: none;
+}
+
+ul#results li a{
+    color: #000;
+    background: #ccc;
+    display: block;
+    text-decoration: none;
+}
+ul#results li a:hover{
+    background: #aaa;
+}
 </style>
 <div id="page-wrapper" style="min-height: 345px;">
     <div class="row">
@@ -29,6 +30,9 @@
         <!-- /.col-lg-12 -->
     </div>
     <!-- /.row -->
+    <?php
+        if(isset($_GET['id']) & !empty($_GET['id'])){
+    ?>
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
@@ -120,6 +124,7 @@
     </div>
     <!-- /.row -->
 </div>
+<?php } else{ echo "<h2>First add the client by searching</h2>"; } ?>
 <script type="text/javascript">
     var results = document.getElementById('results');
     var search = document.getElementById('search');
