@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 23, 2019 at 08:45 AM
+-- Generation Time: Dec 23, 2019 at 08:59 AM
 -- Server version: 10.3.15-MariaDB
 -- PHP Version: 7.1.30
 
@@ -34,6 +34,39 @@ CREATE TABLE `clients` (
   `email` varchar(255) NOT NULL,
   `mobile` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
+  `created` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoices`
+--
+
+CREATE TABLE `invoices` (
+  `id` int(11) NOT NULL,
+  `client_id` varchar(255) NOT NULL,
+  `amount` varchar(255) NOT NULL,
+  `payment_mode` varchar(255) NOT NULL,
+  `payment_ref` varchar(255) NOT NULL,
+  `created` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoice_items`
+--
+
+CREATE TABLE `invoice_items` (
+  `id` int(11) NOT NULL,
+  `invoice_id` varchar(255) NOT NULL,
+  `item_id` varchar(255) NOT NULL,
+  `item_price` varchar(255) NOT NULL,
+  `item_quantity` varchar(255) NOT NULL,
+  `total_price` varchar(255) NOT NULL,
   `created` datetime NOT NULL DEFAULT current_timestamp(),
   `updated` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -82,6 +115,18 @@ ALTER TABLE `clients`
   ADD UNIQUE KEY `email` (`email`,`mobile`);
 
 --
+-- Indexes for table `invoices`
+--
+ALTER TABLE `invoices`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `invoice_items`
+--
+ALTER TABLE `invoice_items`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `items`
 --
 ALTER TABLE `items`
@@ -101,6 +146,18 @@ ALTER TABLE `items_stock`
 -- AUTO_INCREMENT for table `clients`
 --
 ALTER TABLE `clients`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `invoices`
+--
+ALTER TABLE `invoices`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `invoice_items`
+--
+ALTER TABLE `invoice_items`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
