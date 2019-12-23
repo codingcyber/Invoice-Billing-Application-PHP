@@ -1,4 +1,5 @@
 <?php
+session_start();
     include('includes/header.php');
     include('includes/navigation.php');
     require_once('includes/connect.php');
@@ -60,6 +61,7 @@ ul#results li a:hover{
             </div>
             <!-- /.panel -->
         </div>
+        <?php if(isset($_SESSION['invoice'])){ print_r($_SESSION['invoice']); ?>
         <div class="panel panel-default">
           <div class="panel-body">
                     <div class="table-responsive">
@@ -74,20 +76,33 @@ ul#results li a:hover{
                         </tr>
                         </thead>
                         <tbody>
-                        <tr id="prodinv"></tr>
-                        <tr id="servinv"></tr>
+                            <?php
+                                $total = 0;
+                                foreach ($_SESSION['invoice'] as $key => $item) {
+                                    $sql = "SELECT id, name, price FROM items WHERE id=?";
+                                    $result = $db->prepare($sql);
+                                    $result->execute(array($item['item_id']));
+                                    $res = $result->fetch(PDO::FETCH_ASSOC);
+                            ?>
+                            <tr>
+                                <td><a href="remove-item.php?sid=<?php echo $key; ?>&id=<?php echo $res['id']; ?>">x</a> <?php echo $res['id']; ?></td>
+                                <td><?php echo $res['name']; ?></td>
 
-                            <tr id="prodinv">
-                                <td><a href="#">x</a> 1</td>
-                                <td class="text-semibold text-dark">Software</td>
-
-                                <td class="text-center"><input type="number" min="1" name="prodquantity" value="24"><input type="submit" value="Update"> </td>
-                                <td class="text-center amount">INR 321/-</td>
+                                <td class="text-center">
+                                    <form method="post" action="update-quantity.php">
+                                        <input type="number" name="quantity" value="21">
+                                        <input type="hidden" name="itemid" value="21">
+                                        <input type="submit" value="Update"> 
+                                    </form>
+                                </td>
+                                <td class="text-center amount"><?php echo $res['price']; ?>/-</td>
 
                                 </form>
-                                <td class="text-center amount">INR 3452/-</td>
+                                <td class="text-center amount">INR <?php echo $res['price']*$item['quantity']; ?>/-</td>
                             </tr>
-                        
+                            <?php 
+                                $total += $res['price'] * $item['quantity'];
+                            } ?>
                         </tbody>
                     </table>
                 </div>
@@ -96,7 +111,7 @@ ul#results li a:hover{
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Grand Total</label>
-                                <h3 class="amount">INR 24,234/-</h3> 
+                                <h3 class="amount">INR <?php echo $total; ?>/-</h3> 
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -121,6 +136,7 @@ ul#results li a:hover{
                 </div>
             </div>
         </div>
+        <?php } ?>
         <!-- /.col-lg-12 -->
     </div>
     <!-- /.row -->
