@@ -2,7 +2,7 @@
     include('includes/header.php');
     include('includes/navigation.php');
     require_once('includes/connect.php');
-    $sql = "SELECT * FROM items WHERE type='service'";
+    $sql = "SELECT * FROM items WHERE type='product'";
     $result = $db->query($sql);
     $res = $result->fetchAll(PDO::FETCH_ASSOC);
 ?>
