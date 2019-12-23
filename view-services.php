@@ -39,7 +39,7 @@
                                             <td><?php echo $service['id']; ?></td>
                                             <td><?php echo $service['name']; ?></td>
                                             <td><?php echo $service['price']; ?></td>
-                                            <td><a href="update-service.php?id=<?php echo $service['id']; ?>">Edit</a> | <a href="delete-service.php?id=<?php echo $service['id']; ?>">Edit</a></td>
+                                            <td><a href="update-service.php?id=<?php echo $service['id']; ?>">Edit</a> | <a href="delete-item.php?id=<?php echo $service['id']; ?>">Delete</a></td>
                                         </tr>
                                         <?php } ?>
                                     </tbody>
