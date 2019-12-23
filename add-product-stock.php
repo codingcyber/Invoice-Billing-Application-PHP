@@ -34,17 +34,34 @@ if(isset($_POST) & !empty($_POST)){
 
     // insert into clients database table with PHP PDO
     if(empty($errors)){
-        $sql = "INSERT INTO items (name, description, type, price) VALUES (:name, :description, 'product', :price)";
+        $sql = "INSERT INTO items_stock (item_id, stock_in) VALUES (:item_id, :stock_in)";
         $result = $db->prepare($sql);
         $values = array(
-                        ':name'             => $_POST['name'],
-                        ':description'      => $_POST['description'],
-                        ':price'            => $_POST['price']
+                        ':item_id'      => $_GET['id'],
+                        ':stock_in'     => $_POST['stock']
 
                         );
         $res = $result->execute($values);
         if($res){
-            echo "redirect the user to create invoice page";
+            // update the items stock in items table stock column
+            $sql = "SELECT * FROM items WHERE id=?";
+            $result = $db->prepare($sql);
+            $result->execute(array($_GET['id']));
+            $res = $result->fetch(PDO::FETCH_ASSOC);
+            $existing_stock = $res['stock'];
+            $updated_stock = $existing_stock + $_POST['stock'];
+
+            $stocksql = "UPDATE items SET stock=:stock, updated=NOW() WHERE id=:id";
+            $stockresult = $db->prepare($stocksql);
+            $values = array(
+                            ':stock'    => $updated_stock,
+                            ':id'       => $_GET['id']
+
+                            );
+            $stockres = $stockresult->execute($values);
+            if($stockres){
+                echo "redirect the user to view products page";
+            }
         }
     }
 }else{
@@ -88,7 +105,7 @@ $_SESSION['csrf_token_time'] = time();
                                 <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
                                 <div class="form-group">
                                     <label>Product Name</label>
-                                    <input class="form-control" name="name" placeholder="Enter Product Name" disabled=""value="<?php if(isset($_POST['name'])){ echo $_POST['name']; }else{ echo $res['name']; } ?>">
+                                    <input class="form-control" name="name" placeholder="Enter Product Name" disabled="" value="<?php if(isset($_POST['name'])){ echo $_POST['name']; }else{ echo $res['name']; } ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Product Stock</label>

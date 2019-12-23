@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 22, 2019 at 04:07 PM
+-- Generation Time: Dec 23, 2019 at 08:45 AM
 -- Server version: 10.3.15-MariaDB
 -- PHP Version: 7.1.30
 
@@ -55,6 +55,21 @@ CREATE TABLE `items` (
   `updated` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `items_stock`
+--
+
+CREATE TABLE `items_stock` (
+  `id` int(11) NOT NULL,
+  `item_id` varchar(255) NOT NULL,
+  `stock_in` varchar(255) DEFAULT NULL,
+  `stock_out` varchar(255) DEFAULT NULL,
+  `created` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 --
 -- Indexes for dumped tables
 --
@@ -73,6 +88,12 @@ ALTER TABLE `items`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `items_stock`
+--
+ALTER TABLE `items_stock`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -86,6 +107,12 @@ ALTER TABLE `clients`
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `items_stock`
+--
+ALTER TABLE `items_stock`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 

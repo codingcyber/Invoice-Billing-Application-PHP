@@ -68,6 +68,9 @@
                                     <a href="add-product.php">Add Product</a>
                                 </li>
                                 <li>
+                                    <a href="add-product-stock.php">Add Product Stock</a>
+                                </li>
+                                <li>
                                     <a href="view-products.php">View Products</a>
                                 </li>
                             </ul>
