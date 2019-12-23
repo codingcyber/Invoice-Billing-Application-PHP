@@ -6,6 +6,6 @@ $result->bindValue(':search', $_GET['search'].'%');
 $result->execute();
 $res = $result->fetchAll(PDO::FETCH_ASSOC);
 foreach ($res as $row) {
-	echo "<li><a href='add-invoice-item.php?id={$row['id']}'>".$row['name']."</a>";
+	echo "<li><a href='add-invoice-item.php?id={$row['id']}&cid={$_GET['cid']}'>".$row['name']."</a>";
 }
 ?>

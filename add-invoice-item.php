@@ -3,6 +3,7 @@ session_start();
 if(isset($_GET) & !empty($_GET)){
 	$itemid = $_GET['id'];
 	// get the customer id from url
+	$cid = $_GET['cid'];
 	if(isset($_GET['quant']) & !empty($_GET['quant'])){
 		$quant = $_GET['quant'];
 	}else{
@@ -32,8 +33,10 @@ if(isset($_GET) & !empty($_GET)){
 									);
 	}
 	// redirect the user to create-invoice page with customer id
+	header("location:create-invoice.php?id={$cid}");
 }else{
 	// redirect the user to create-invoice page with customer id
+	header("location:create-invoice.php?id={$cid}");
 }
 echo "<pre>";
 print_r($_SESSION['invoice']);

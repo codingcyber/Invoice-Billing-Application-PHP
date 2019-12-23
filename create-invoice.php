@@ -32,6 +32,7 @@ ul#results li a:hover{
     <!-- /.row -->
     <?php
         if(isset($_GET['id']) & !empty($_GET['id'])){
+            echo "<input type='hidden' id='cid' name='cid' value='{$_GET['id']}'";
     ?>
     <div class="row">
         <div class="col-lg-12">
@@ -128,8 +129,11 @@ ul#results li a:hover{
 <script type="text/javascript">
     var results = document.getElementById('results');
     var search = document.getElementById('search');
+    var customerId = document.getElementById('cid');
+
     function getItemResults(){
         var searchVal = search.value;
+        var customerIdVal = customerId.value;
 
         if(searchVal.length < 1){
             results.style.display='none';
@@ -138,7 +142,7 @@ ul#results li a:hover{
 
         console.log('searchVal : ' + searchVal);
         var xhr = new XMLHttpRequest();
-        var url = 'searchitems.php?search=' + searchVal;
+        var url = 'searchitems.php?search=' + searchVal+'&cid='+customerIdVal;
         // open function
         xhr.open('GET', url, true);
 
