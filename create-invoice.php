@@ -1,7 +1,26 @@
 <?php
     include('includes/header.php');
     include('includes/navigation.php');
+    require_once('includes/connect.php');
 ?>
+<style type="text/css">
+    ul#results{
+        list-style: none;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: none;
+    }
+    ul#results li a{
+        color: #000;
+        background: #ccc;
+        display: block;
+        text-decoration: none;
+    }
+    ul#results li a:hover{
+        background: #aaa;
+    }
+</style>
 <div id="page-wrapper" style="min-height: 345px;">
     <div class="row">
         <div class="col-lg-12">
@@ -19,12 +38,15 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-lg-12">
-                            <form role="form">
+                            <!-- <form role="form"> -->
                                 <div class="form-group">
                                     <label>Search Product/Service</label>
-                                    <input class="form-control" name="name" placeholder="Product Name">
+                                    <input id="search" class="form-control" placeholder="Product Name">
                                 </div>
-                            </form>
+                                <ul id="results">
+
+                                </ul>
+                            <!-- </form> -->
                         </div>
                         <!-- /.col-lg-6 (nested) -->   
                     <!-- /.row (nested) -->
@@ -92,11 +114,41 @@
                         </div>
                     </div>
                 </div>
-               
-          </div>
-</div>
+            </div>
+        </div>
         <!-- /.col-lg-12 -->
     </div>
     <!-- /.row -->
 </div>
+<script type="text/javascript">
+    var results = document.getElementById('results');
+    var search = document.getElementById('search');
+    function getItemResults(){
+        var searchVal = search.value;
+
+        if(searchVal.length < 1){
+            results.style.display='none';
+            return;
+        }
+
+        console.log('searchVal : ' + searchVal);
+        var xhr = new XMLHttpRequest();
+        var url = 'searchitems.php?search=' + searchVal;
+        // open function
+        xhr.open('GET', url, true);
+
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4 && xhr.status == 200){
+                var text = xhr.responseText;
+                //console.log('response from searchresults.php : ' + xhr.responseText);
+                results.innerHTML = text;
+                results.style.display='block';
+            }
+        }
+
+        xhr.send();
+    }
+
+    search.addEventListener("input", getItemResults);
+</script>
 <?php include('includes/footer.php'); ?>
