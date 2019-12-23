@@ -38,7 +38,7 @@
                                     <td><?php echo $product['id']; ?></td>
                                     <td><?php echo $product['name']; ?></td>
                                     <td><?php echo $product['price']; ?></td>
-                                    <td><a href="update-product.php?id=<?php echo $product['id']; ?>">Edit</a> | <a href="delete-item.php?id=<?php echo $product['id']; ?>">Delete</a></td>
+                                    <td><a href="update-product.php?id=<?php echo $product['id']; ?>">Edit</a> | <a href="add-product-stock.php?id=<?php echo $product['id']; ?>">Add Stock</a> | <a href="delete-item.php?id=<?php echo $product['id']; ?>">Delete</a></td>
                                 </tr>
                                 <?php } ?>
                             </tbody>

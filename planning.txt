@@ -40,6 +40,10 @@ invoice_items
 -updated
 
 items_stock
+-id
+-item_id
+-stock-in
+-stock_out
 -created
 -updated
 
