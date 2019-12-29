@@ -89,9 +89,11 @@ ul#results li a:hover{
                                 <td><?php echo $res['name']; ?></td>
 
                                 <td class="text-center">
-                                    <form method="post" action="update-quantity.php">
-                                        <input type="number" name="quantity" value="21">
-                                        <input type="hidden" name="itemid" value="21">
+                                    <form method="post" action="update-item-quantity.php">
+                                        <input type="number" name="quantity" value="<?php echo $item['quantity']; ?>">
+                                        <input type="hidden" name="itemid" value="<?php echo $res['id']; ?>">
+                                        <input type="hidden" name="cid" value="<?php echo $_GET['id']; ?>">
+                                        <input type="hidden" name="sesid" value="<?php echo $key; ?>">
                                         <input type="submit" value="Update"> 
                                     </form>
                                 </td>
