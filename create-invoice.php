@@ -1,8 +1,50 @@
 <?php
-session_start();
+    session_start();
+    ob_start();
     include('includes/header.php');
     include('includes/navigation.php');
     require_once('includes/connect.php');
+    if(isset($_POST) & !empty($_POST)){
+        // insert into invoices table
+        $sql = "INSERT INTO invoices (client_id, amount, payment_mode, payment_ref) VALUES (:client_id, :amount, :payment_mode, :payment_ref)";
+        $result = $db->prepare($sql);
+        $values = array(
+                        ':client_id'        => $_POST['cid'],
+                        ':amount'           => $_POST['total'],
+                        ':payment_mode'     => $_POST['paymentmode'],
+                        ':payment_ref'      => $_POST['paymentref']
+
+                        );
+        $res = $result->execute($values);
+        // if the insert is successful, get the last insert id, insert the items in invoice_items table
+        if($res){
+            echo $insertid = $db->lastInsertID();
+            // loop through invoice session and insert the items in inovice_items table
+            foreach ($_SESSION['invoice'] as $item) {
+                $itemsql = "SELECT id, name, price FROM items WHERE id=?";
+                $itemresult = $db->prepare($itemsql);
+                $itemresult->execute(array($item['item_id']));
+                $itemres = $itemresult->fetch(PDO::FETCH_ASSOC);
+                $totalprice = $itemres['price'] * $item['quantity'];
+
+                // insert into invoice_items table
+                $invitmsql = "INSERT INTO invoice_items (invoice_id, item_id, item_price, item_quantity, total_price) VALUES (:invoice_id, :item_id, :item_price, :item_quantity, :total_price)";
+                $invitmresult = $db->prepare($invitmsql);
+                $values = array(
+                                ':invoice_id'       => $insertid,
+                                ':item_id'          => $itemres['id'],
+                                ':item_price'       => $itemres['price'],
+                                ':item_quantity'    => $item['quantity'],
+                                ':total_price'       => $totalprice
+
+                                );
+                $invitmres = $invitmresult->execute($values);
+            }
+            // unset the session invoice and redirect to view invoices page
+            unset($_SESSION['invoice']);
+            header("location:view-invoice.php");
+        }
+    }
 ?>
 <style type="text/css">
 ul#results{
@@ -61,7 +103,7 @@ ul#results li a:hover{
             </div>
             <!-- /.panel -->
         </div>
-        <?php if(isset($_SESSION['invoice'])){ print_r($_SESSION['invoice']); ?>
+        <?php if(isset($_SESSION['invoice'])){ ?>
         <div class="panel panel-default">
           <div class="panel-body">
                     <div class="table-responsive">
@@ -109,32 +151,36 @@ ul#results li a:hover{
                     </table>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Grand Total</label>
-                                <h3 class="amount">INR <?php echo $total; ?>/-</h3> 
+                    <form method="post">
+                        <input type="hidden" name="cid" value="<?php echo $_GET['id']; ?>">
+                        <input type="hidden" name="total" value="<?php echo $total; ?>">
+                        <div class="col-sm-12">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Grand Total</label>
+                                    <h3 class="amount">INR <?php echo $total; ?>/-</h3> 
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Payment Mode</label>
+                                    <input class="form-control" name="paymentmode" placeholder="Payment Mode">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Payment Reference</label>
+                                    <input class="form-control" name="paymentref" placeholder="Payment Reference">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <br>
+                                    <input type="submit" value="Create Invoice" class="btn btn-primary">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Payment Mode</label>
-                                <input class="form-control" name="name" placeholder="Payment Mode">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label>Payment Reference</label>
-                                <input class="form-control" name="name" placeholder="Payment Reference">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <br>
-                                <input type="submit" value="Create Invoice" class="btn btn-primary">
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
