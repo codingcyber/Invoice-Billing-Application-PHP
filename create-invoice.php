@@ -5,6 +5,7 @@
     include('includes/navigation.php');
     require_once('includes/connect.php');
     if(isset($_POST) & !empty($_POST)){
+        // CSRF Token
         // insert into invoices table
         $sql = "INSERT INTO invoices (client_id, amount, payment_mode, payment_ref) VALUES (:client_id, :amount, :payment_mode, :payment_ref)";
         $result = $db->prepare($sql);
@@ -39,10 +40,40 @@
 
                                 );
                 $invitmres = $invitmresult->execute($values);
+
+                // update the product stock to redue the item stock
+                $sql = "SELECT * FROM items WHERE id=? AND type='product'";
+                $result = $db->prepare($sql);
+                $result->execute(array($itemres['id']));
+                $res = $result->fetch(PDO::FETCH_ASSOC);
+                
+                if($res){
+                    // update the items stock in items table stock column
+                    $itmstksql = "INSERT INTO items_stock (item_id, stock_out) VALUES (:item_id, :stock_out)";
+                    $itmstkresult = $db->prepare($itmstksql);
+                    $values = array(
+                                    ':item_id'      => $itemres['id'],
+                                    ':stock_out'    => $item['quantity']
+                                    );
+                    $itmstkres = $itmstkresult->execute($values);
+                    $existing_stock = $res['stock'];
+                    $updated_stock = $existing_stock - $item['quantity'];
+
+                    $stocksql = "UPDATE items SET stock=:stock, updated=NOW() WHERE id=:id";
+                    $stockresult = $db->prepare($stocksql);
+                    $values = array(
+                                    ':stock'    => $updated_stock,
+                                    ':id'       => $itemres['id']
+                                    );
+                    $stockres = $stockresult->execute($values);
+                    if($stockres){
+                        echo "redirect the user to view products page";
+                    }
+                }
             }
             // unset the session invoice and redirect to view invoices page
             unset($_SESSION['invoice']);
-            header("location:view-invoice.php");
+            header("location:view-invoices.php");
         }
     }
 ?>
