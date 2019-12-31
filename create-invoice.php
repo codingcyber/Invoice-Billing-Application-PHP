@@ -6,76 +6,106 @@
     require_once('includes/connect.php');
     if(isset($_POST) & !empty($_POST)){
         // CSRF Token
-        // insert into invoices table
-        $sql = "INSERT INTO invoices (client_id, amount, payment_mode, payment_ref) VALUES (:client_id, :amount, :payment_mode, :payment_ref)";
-        $result = $db->prepare($sql);
-        $values = array(
-                        ':client_id'        => $_POST['cid'],
-                        ':amount'           => $_POST['total'],
-                        ':payment_mode'     => $_POST['paymentmode'],
-                        ':payment_ref'      => $_POST['paymentref']
+        if(isset($_POST['csrf_token'])){
+        if($_POST['csrf_token'] === $_SESSION['csrf_token']){
+        }else{
+            $errors[] = "Problem with CSRF Token Verification";
+        }
+        }else{
+            $errors[] = "Problem with CSRF Token Validation";
+        }
 
-                        );
-        $res = $result->execute($values);
-        // if the insert is successful, get the last insert id, insert the items in invoice_items table
-        if($res){
-            echo $insertid = $db->lastInsertID();
-            // loop through invoice session and insert the items in inovice_items table
-            foreach ($_SESSION['invoice'] as $item) {
-                $itemsql = "SELECT id, name, price FROM items WHERE id=?";
-                $itemresult = $db->prepare($itemsql);
-                $itemresult->execute(array($item['item_id']));
-                $itemres = $itemresult->fetch(PDO::FETCH_ASSOC);
-                $totalprice = $itemres['price'] * $item['quantity'];
+        // CSRF Token Time Validation
+        $max_time = 60*60*24;
+        if(isset($_SESSION['csrf_token_time'])){
+            $token_time = $_SESSION['csrf_token_time'];
+            if(($token_time + $max_time) >= time()){
+            }else{
+                $errors[] = "CSRF Token Expired";
+                unset($_SESSION['csrf_token']);
+                unset($_SESSION['csrf_token_time']);
+            }
+        }else{
+            unset($_SESSION['csrf_token']);
+            unset($_SESSION['csrf_token_time']);
+        }
 
-                // insert into invoice_items table
-                $invitmsql = "INSERT INTO invoice_items (invoice_id, item_id, item_price, item_quantity, total_price) VALUES (:invoice_id, :item_id, :item_price, :item_quantity, :total_price)";
-                $invitmresult = $db->prepare($invitmsql);
-                $values = array(
-                                ':invoice_id'       => $insertid,
-                                ':item_id'          => $itemres['id'],
-                                ':item_price'       => $itemres['price'],
-                                ':item_quantity'    => $item['quantity'],
-                                ':total_price'       => $totalprice
+        if(empty($errors)){
+            // insert into invoices table
+            $sql = "INSERT INTO invoices (client_id, amount, payment_mode, payment_ref) VALUES (:client_id, :amount, :payment_mode, :payment_ref)";
+            $result = $db->prepare($sql);
+            $values = array(
+                            ':client_id'        => $_POST['cid'],
+                            ':amount'           => $_POST['total'],
+                            ':payment_mode'     => $_POST['paymentmode'],
+                            ':payment_ref'      => $_POST['paymentref']
 
-                                );
-                $invitmres = $invitmresult->execute($values);
+                            );
+            $res = $result->execute($values);
+            // if the insert is successful, get the last insert id, insert the items in invoice_items table
+            if($res){
+                echo $insertid = $db->lastInsertID();
+                // loop through invoice session and insert the items in inovice_items table
+                foreach ($_SESSION['invoice'] as $item) {
+                    $itemsql = "SELECT id, name, price FROM items WHERE id=?";
+                    $itemresult = $db->prepare($itemsql);
+                    $itemresult->execute(array($item['item_id']));
+                    $itemres = $itemresult->fetch(PDO::FETCH_ASSOC);
+                    $totalprice = $itemres['price'] * $item['quantity'];
 
-                // update the product stock to redue the item stock
-                $sql = "SELECT * FROM items WHERE id=? AND type='product'";
-                $result = $db->prepare($sql);
-                $result->execute(array($itemres['id']));
-                $res = $result->fetch(PDO::FETCH_ASSOC);
-                
-                if($res){
-                    // update the items stock in items table stock column
-                    $itmstksql = "INSERT INTO items_stock (item_id, stock_out) VALUES (:item_id, :stock_out)";
-                    $itmstkresult = $db->prepare($itmstksql);
+                    // insert into invoice_items table
+                    $invitmsql = "INSERT INTO invoice_items (invoice_id, item_id, item_price, item_quantity, total_price) VALUES (:invoice_id, :item_id, :item_price, :item_quantity, :total_price)";
+                    $invitmresult = $db->prepare($invitmsql);
                     $values = array(
-                                    ':item_id'      => $itemres['id'],
-                                    ':stock_out'    => $item['quantity']
-                                    );
-                    $itmstkres = $itmstkresult->execute($values);
-                    $existing_stock = $res['stock'];
-                    $updated_stock = $existing_stock - $item['quantity'];
+                                    ':invoice_id'       => $insertid,
+                                    ':item_id'          => $itemres['id'],
+                                    ':item_price'       => $itemres['price'],
+                                    ':item_quantity'    => $item['quantity'],
+                                    ':total_price'       => $totalprice
 
-                    $stocksql = "UPDATE items SET stock=:stock, updated=NOW() WHERE id=:id";
-                    $stockresult = $db->prepare($stocksql);
-                    $values = array(
-                                    ':stock'    => $updated_stock,
-                                    ':id'       => $itemres['id']
                                     );
-                    $stockres = $stockresult->execute($values);
-                    if($stockres){
-                        echo "redirect the user to view products page";
+                    $invitmres = $invitmresult->execute($values);
+
+                    // update the product stock to redue the item stock
+                    $sql = "SELECT * FROM items WHERE id=? AND type='product'";
+                    $result = $db->prepare($sql);
+                    $result->execute(array($itemres['id']));
+                    $res = $result->fetch(PDO::FETCH_ASSOC);
+                    
+                    if($res){
+                        // update the items stock in items table stock column
+                        $itmstksql = "INSERT INTO items_stock (item_id, stock_out) VALUES (:item_id, :stock_out)";
+                        $itmstkresult = $db->prepare($itmstksql);
+                        $values = array(
+                                        ':item_id'      => $itemres['id'],
+                                        ':stock_out'    => $item['quantity']
+                                        );
+                        $itmstkres = $itmstkresult->execute($values);
+                        $existing_stock = $res['stock'];
+                        $updated_stock = $existing_stock - $item['quantity'];
+
+                        $stocksql = "UPDATE items SET stock=:stock, updated=NOW() WHERE id=:id";
+                        $stockresult = $db->prepare($stocksql);
+                        $values = array(
+                                        ':stock'    => $updated_stock,
+                                        ':id'       => $itemres['id']
+                                        );
+                        $stockres = $stockresult->execute($values);
+                        if($stockres){
+                            echo "redirect the user to view products page";
+                        }
                     }
                 }
+                // unset the session invoice and redirect to view invoices page
+                unset($_SESSION['invoice']);
+                header("location:view-invoices.php");
             }
-            // unset the session invoice and redirect to view invoices page
-            unset($_SESSION['invoice']);
-            header("location:view-invoices.php");
         }
     }
+// create a CSRF token
+$token = md5(uniqid(rand(), TRUE));
+$_SESSION['csrf_token'] = $token;
+$_SESSION['csrf_token_time'] = time();
 ?>
 <style type="text/css">
 ul#results{
@@ -103,6 +133,15 @@ ul#results li a:hover{
         </div>
         <!-- /.col-lg-12 -->
     </div>
+    <?php
+        if(!empty($errors)){
+            echo "<div class='alert alert-danger'>";
+            foreach ($errors as $error) {
+                echo $error . "<br>";
+            }
+            echo "</div>";
+        }
+    ?>
     <!-- /.row -->
     <?php
         if(isset($_GET['id']) & !empty($_GET['id'])){
@@ -183,6 +222,7 @@ ul#results li a:hover{
                 </div>
                 <div class="row">
                     <form method="post">
+                        <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
                         <input type="hidden" name="cid" value="<?php echo $_GET['id']; ?>">
                         <input type="hidden" name="total" value="<?php echo $total; ?>">
                         <div class="col-sm-12">
