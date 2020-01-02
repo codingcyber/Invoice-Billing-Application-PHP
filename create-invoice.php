@@ -127,7 +127,7 @@ use PHPMailer\PHPMailer\Exception;
                     // Content
                     $mail->isHTML(true);                                  // Set email format to HTML
                     $mail->Subject = 'Payment Confirmation';
-                    $mail->Body    = "Thank you for making payment of INR {$totalprice}/-";
+                    $mail->Body    = "Thank you for making payment of INR {$_POST['total']}/-";
 
                     $mail->send();
                 } 
