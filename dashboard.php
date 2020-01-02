@@ -1,6 +1,8 @@
 <?php
     include('includes/header.php');
     include('includes/navigation.php');
+    $today = date("Y-m-d");
+    require_once('includes/connect.php');
 ?>
 <div id="page-wrapper">
     <div class="row">
@@ -18,8 +20,15 @@
                         <div class="col-xs-3">
                             <i class="fa fa-users fa-5x"></i>
                         </div>
+                        <?php
+                            // get the number of new customers based on todays date
+                            $clientsql = "SELECT * FROM clients WHERE DATE(created)=?";
+                            $clientresult = $db->prepare($clientsql);
+                            $clientresult->execute(array($today));
+                            $todayclients = $clientresult->rowCount();
+                        ?>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">26</div>
+                            <div class="huge"><?php echo $todayclients; ?></div>
                             <div>New Customers Today!</div>
                         </div>
                     </div>
@@ -40,8 +49,21 @@
                         <div class="col-xs-3">
                             <i class="fa fa-money fa-5x"></i>
                         </div>
+                        <?php
+                            $todayrevenue = 0;
+                            // get the number of new invoices based on todays date
+                            $invoicesql = "SELECT * FROM invoices WHERE DATE(created)=?";
+                            $invoiceresult = $db->prepare($invoicesql);
+                            $invoiceresult->execute(array($today));
+                            $todayinvoices = $invoiceresult->rowCount();
+                            // for calculating revenue
+                            $invoiceres = $invoiceresult->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($invoiceres as $invoicer) {
+                                $todayrevenue += $invoicer['amount'];
+                            }
+                        ?>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">12</div>
+                            <div class="huge"><?php echo $todayinvoices; ?></div>
                             <div>Today Invoices!</div>
                         </div>
                     </div>
@@ -63,7 +85,7 @@
                             <i class="fa fa-inr fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">124/-</div>
+                            <div class="huge"><?php echo $todayrevenue; ?>/-</div>
                             <div>Todays Revenue!</div>
                         </div>
                     </div>

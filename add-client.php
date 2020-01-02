@@ -1,7 +1,5 @@
 <?php
 session_start();
-include('includes/header.php');
-include('includes/navigation.php');
 require_once('includes/connect.php');
 if(isset($_POST) & !empty($_POST)){
     // validations for email/mobile field unique
@@ -63,7 +61,8 @@ if(isset($_POST) & !empty($_POST)){
                         );
         $res = $result->execute($values);
         if($res){
-            echo "redirect the user to create invoice page";
+            //echo "redirect the user to create invoice page";
+            header("location: view-clients.php");
         }
     }
 }
@@ -71,6 +70,8 @@ if(isset($_POST) & !empty($_POST)){
 $token = md5(uniqid(rand(), TRUE));
 $_SESSION['csrf_token'] = $token;
 $_SESSION['csrf_token_time'] = time();
+include('includes/header.php');
+include('includes/navigation.php');
 ?>
 <div id="page-wrapper" style="min-height: 345px;">
     <div class="row">
