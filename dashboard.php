@@ -110,14 +110,28 @@
 
               function drawChart() {
                 var data = google.visualization.arrayToDataTable([
-                  ['Days', 'Customers', 'Revenue'],
-                  ['Mon',  10,      400],
-                  ['Tue',  8,      460],
-                  ['Wed',  6,       1120],
-                  ['Thu',  12,      540],
-                  ['Fri',  12,      540],
-                  ['Sat',  12,      540],
-                  ['Sun',  12,      540]
+                    ['Days', 'Customers', 'Revenue'],
+                <?php
+                    // get the number of customers and revenue for 7 days
+                    for ($i=0; $i < 7; $i++) { 
+                        $day = date("Y-m-d", strtotime("-$i days"));
+                        $revenue = 0;
+                        $inv7sql = "SELECT * FROM invoices WHERE DATE(created)=?";
+                        $inv7result = $db->prepare($inv7sql);
+                        $inv7result->execute(array($day));
+                        // for calculating revenue
+                        $inv7res = $inv7result->fetchAll(PDO::FETCH_ASSOC);
+                        foreach ($inv7res as $inv7r) {
+                            $revenue += $inv7r['amount'];
+                        }
+
+                        $client7sql = "SELECT * FROM clients WHERE DATE(created)=?";
+                        $client7result = $db->prepare($client7sql);
+                        $client7result->execute(array($day));
+                        $client7res = $client7result->rowCount();
+                ?>
+                  ['<?php echo $day; ?>',  <?php echo $client7res; ?>,      <?php echo $revenue; ?>],
+              <?php } ?>
                 ]);
 
                 var options = {
@@ -200,10 +214,9 @@
                                     <tbody>
                                         <?php
                                         // for loop to loop through 30 days
-                                        for ($i=1; $i < 30; $i++) { 
+                                        for ($i=0; $i < 30; $i++) { 
                                             $day = date("Y-m-d", strtotime("-$i days"));
                                             $revenue = 0;
-                                            // get the number of new invoices based on todays date
                                             $inv30sql = "SELECT * FROM invoices WHERE DATE(created)=?";
                                             $inv30result = $db->prepare($inv30sql);
                                             $inv30result->execute(array($day));
