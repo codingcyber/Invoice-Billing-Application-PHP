@@ -1,9 +1,16 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
     session_start();
     ob_start();
     include('includes/header.php');
     include('includes/navigation.php');
     require_once('includes/connect.php');
+    require_once('includes/smtp.php');
+
+    require 'PHPMailer-master/src/Exception.php';
+    require 'PHPMailer-master/src/PHPMailer.php';
+    require 'PHPMailer-master/src/SMTP.php';
     if(isset($_POST) & !empty($_POST)){
         // CSRF Token
         if(isset($_POST['csrf_token'])){
@@ -96,9 +103,35 @@
                         }
                     }
                 }
+                // send email with phpmailer to customer
+                $mail = new PHPMailer(true);
+                try {
+                    //Server settings
+                    $mail->isSMTP();                                            // Send using SMTP
+                    $mail->Host       = $smtphost;                    // Set the SMTP server to send through
+                    $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
+                    $mail->Username   = $smtpuser;                     // SMTP username
+                    $mail->Password   = $smtppass;                               // SMTP password
+                    $mail->SMTPSecure = 'tls';         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
+                    $mail->Port       = 587;                                    // TCP port to connect to
+
+                    //Recipients
+                    $mail->setFrom('vivek@codingcyber.com', 'Vivek Vengala');
+                    // should get the email from clients database table
+                    $mail->addAddress('vivek@codingcyber.com', 'Vivek Vengala');     // Add a recipient
+
+                    // Content
+                    $mail->isHTML(true);                                  // Set email format to HTML
+                    $mail->Subject = 'Payment Confirmation';
+                    $mail->Body    = "Thank you for making payment of INR {$totalprice}/-";
+
+                    $mail->send();
+                } catch (Exception $e) {
+                    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                }
                 // unset the session invoice and redirect to view invoices page
                 unset($_SESSION['invoice']);
-                header("location:view-invoices.php");
+                //header("location:view-invoices.php");
             }
         }
     }
