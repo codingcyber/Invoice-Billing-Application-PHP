@@ -105,6 +105,10 @@ use PHPMailer\PHPMailer\Exception;
                 }
                 // send email with phpmailer to customer
                 $mail = new PHPMailer(true);
+                $clientsql = "SELECT name, email FROM clients WHERE id=?";
+                $clientresult = $db->prepare($clientsql);
+                $clientresult->execute(array($_POST['cid']));
+                $clientres = $clientresult->fetch(PDO::FETCH_ASSOC);
                 try {
                     //Server settings
                     $mail->isSMTP();                                            // Send using SMTP
@@ -116,9 +120,9 @@ use PHPMailer\PHPMailer\Exception;
                     $mail->Port       = 587;                                    // TCP port to connect to
 
                     //Recipients
-                    $mail->setFrom('vivek@codingcyber.com', 'Vivek Vengala');
+                    $mail->setFrom('your-email@domain.com', 'Your Name');
                     // should get the email from clients database table
-                    $mail->addAddress('vivek@codingcyber.com', 'Vivek Vengala');     // Add a recipient
+                    $mail->addAddress($clientres['email'], $clientres['name']);     // Add a recipient
 
                     // Content
                     $mail->isHTML(true);                                  // Set email format to HTML
