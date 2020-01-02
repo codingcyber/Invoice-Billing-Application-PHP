@@ -198,54 +198,29 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <?php
+                                        // for loop to loop through 30 days
+                                        for ($i=1; $i < 30; $i++) { 
+                                            $day = date("Y-m-d", strtotime("-$i days"));
+                                            $revenue = 0;
+                                            // get the number of new invoices based on todays date
+                                            $inv30sql = "SELECT * FROM invoices WHERE DATE(created)=?";
+                                            $inv30result = $db->prepare($inv30sql);
+                                            $inv30result->execute(array($day));
+                                            $invoicecount = $inv30result->rowCount();
+                                            // for calculating revenue
+                                            $inv30res = $inv30result->fetchAll(PDO::FETCH_ASSOC);
+                                            foreach ($inv30res as $inv30r) {
+                                                $revenue += $inv30r['amount'];
+                                            }
+                                        ?>
                                         <tr>
-                                            <td>3326</td>
-                                            <td>10/21/2013</td>
-                                            <td>3:29 PM</td>
-                                            <td>$321.33</td>
+                                            <td><?php echo $day; ?></td>
+                                            <td><?php echo $invoicecount; ?></td>
+                                            <td><?php echo $revenue; ?>/-</td>
+                                            <td>----</td>
                                         </tr>
-                                        <tr>
-                                            <td>3325</td>
-                                            <td>10/21/2013</td>
-                                            <td>3:20 PM</td>
-                                            <td>$234.34</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3324</td>
-                                            <td>10/21/2013</td>
-                                            <td>3:03 PM</td>
-                                            <td>$724.17</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3323</td>
-                                            <td>10/21/2013</td>
-                                            <td>3:00 PM</td>
-                                            <td>$23.71</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3322</td>
-                                            <td>10/21/2013</td>
-                                            <td>2:49 PM</td>
-                                            <td>$8345.23</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3321</td>
-                                            <td>10/21/2013</td>
-                                            <td>2:23 PM</td>
-                                            <td>$245.12</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3320</td>
-                                            <td>10/21/2013</td>
-                                            <td>2:15 PM</td>
-                                            <td>$5663.54</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3319</td>
-                                            <td>10/21/2013</td>
-                                            <td>2:13 PM</td>
-                                            <td>$943.45</td>
-                                        </tr>
+                                        <?php } ?>
                                     </tbody>
                                 </table>
                             </div>
