@@ -1,13 +1,11 @@
 <?php
 session_start();
-include('includes/header.php');
-include('includes/navigation.php');
 require_once('includes/connect.php');
 if(isset($_POST) & !empty($_POST)){
     // validations for email/mobile field unique
     if(empty($_POST['name'])){ $errors[] = 'Name field is Required'; }
     if(empty($_POST['email'])){ $errors[] = 'E-Mail field is Required'; }else{
-        $sql = "SELECT * FROM clients WHERE email=?";
+        $sql = "SELECT * FROM clients WHERE email=? AND id != {$_GET['id']}";
         $result = $db->prepare($sql);
         $result->execute(array($_POST['email']));
         $count = $result->rowCount();
@@ -16,7 +14,7 @@ if(isset($_POST) & !empty($_POST)){
         }
     }
     if(empty($_POST['mobile'])){ $errors[] = 'Mobile field is Required'; }else{
-        $sql = "SELECT * FROM clients WHERE mobile=?";
+        $sql = "SELECT * FROM clients WHERE mobile=? AND id != {$_GET['id']}";
         $result = $db->prepare($sql);
         $result->execute(array($_POST['mobile']));
         $count = $result->rowCount();
@@ -64,7 +62,7 @@ if(isset($_POST) & !empty($_POST)){
                         );
         $res = $result->execute($values);
         if($res){
-            echo "redirect the user to create invoice page";
+            header("location: view-clients.php");
         }
     }
 }else{
@@ -77,6 +75,8 @@ if(isset($_POST) & !empty($_POST)){
 $token = md5(uniqid(rand(), TRUE));
 $_SESSION['csrf_token'] = $token;
 $_SESSION['csrf_token_time'] = time();
+include('includes/header.php');
+include('includes/navigation.php');
 ?>
 <div id="page-wrapper" style="min-height: 345px;">
     <div class="row">

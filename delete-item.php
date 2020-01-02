@@ -7,5 +7,6 @@ if($res){
 	//redirect user to view service/products page
 	header('location: view-services.php');
 }else{
-	echo "Failed to Delte Record";
+	//echo "Failed to Delte Record";
+	header('location: view-services.php');
 }

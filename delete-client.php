@@ -7,5 +7,6 @@ if($res){
 	//redirect user to view clients page
 	header('location: view-clients.php');
 }else{
-	echo "Failed to Delte Record";
+	//echo "Failed to Delte Record";
+	header('location: view-clients.php');
 }

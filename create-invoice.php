@@ -130,12 +130,13 @@ use PHPMailer\PHPMailer\Exception;
                     $mail->Body    = "Thank you for making payment of INR {$totalprice}/-";
 
                     $mail->send();
-                } catch (Exception $e) {
+                } 
+                catch (Exception $e) {
                     echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
                 }
                 // unset the session invoice and redirect to view invoices page
                 unset($_SESSION['invoice']);
-                //header("location:view-invoices.php");
+                header("location:view-invoices.php");
             }
         }
     }

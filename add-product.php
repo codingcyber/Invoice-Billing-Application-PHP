@@ -1,8 +1,6 @@
 <?php
 session_start();
-    include('includes/header.php');
-    include('includes/navigation.php');
-    require_once('includes/connect.php');
+require_once('includes/connect.php');
 if(isset($_POST) & !empty($_POST)){
     // validations for email/mobile field unique
     if(empty($_POST['name'])){ $errors[] = 'Name field is Required'; }
@@ -45,7 +43,7 @@ if(isset($_POST) & !empty($_POST)){
                         );
         $res = $result->execute($values);
         if($res){
-            echo "redirect the user to create invoice page";
+            header("location: view-products.php");
         }
     }
 }
@@ -53,6 +51,8 @@ if(isset($_POST) & !empty($_POST)){
 $token = md5(uniqid(rand(), TRUE));
 $_SESSION['csrf_token'] = $token;
 $_SESSION['csrf_token_time'] = time();
+include('includes/header.php');
+include('includes/navigation.php');
 ?>
 <div id="page-wrapper" style="min-height: 345px;">
     <div class="row">
@@ -84,15 +84,15 @@ $_SESSION['csrf_token_time'] = time();
                                 <input type="hidden" name="csrf_token" value="<?php echo $token; ?>">
                                 <div class="form-group">
                                     <label>Product Name</label>
-                                    <input class="form-control" name="name" placeholder="Enter Product Name">
+                                    <input class="form-control" name="name" placeholder="Enter Product Name" value="<?php if(isset($_POST['name'])){ echo $_POST['name']; } ?>">
                                 </div>
                                 <div class="form-group">
                                     <label>Product Description</label>
-                                    <textarea class="form-control" name="description" rows="3"></textarea>
+                                    <textarea class="form-control" name="description" rows="3"><?php if(isset($_POST['description'])){ echo $_POST['description']; } ?></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label>Product Price</label>
-                                    <input class="form-control" name="price" placeholder="Enter Service Price">
+                                    <input class="form-control" name="price" placeholder="Enter Service Price" value="<?php if(isset($_POST['price'])){ echo $_POST['price']; } ?>">
                                 </div>
                                 <input type="submit" class="btn btn-primary" value="Submit">
                                 <button type="reset" class="btn btn-danger">Reset </button>
